@@ -1,0 +1,10 @@
+[
+    {
+        "ParameterKey": "BucketName",
+        "ParameterValue": "fuego-cloud-state-dev"
+    },
+    {
+        "ParameterKey": "LockTableName",
+        "ParameterValue": "fuego-cloud-state-locking-dev"
+    }
+]

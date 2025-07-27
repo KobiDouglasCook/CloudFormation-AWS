@@ -2,6 +2,12 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: EKS Microservices Infrastructure (Network, Compute, Security)
 
 Parameters:
+  Environment:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Description: Deployment environment name
   VpcCidr:
     Type: String
     Default: 10.0.0.0/16
@@ -29,6 +35,7 @@ Resources:
         PublicSubnet2Cidr: !Ref PublicSubnet2Cidr
         PrivateSubnet1Cidr: !Ref PrivateSubnet1Cidr
         PrivateSubnet2Cidr: !Ref PrivateSubnet2Cidr
+        Environment: !Ref Environment
 
   SecurityStack:
     Type: AWS::CloudFormation::Stack
@@ -40,6 +47,7 @@ Resources:
         PublicSubnet2: !GetAtt NetworkStack.Outputs.PublicSubnet2
         PrivateSubnet1: !GetAtt NetworkStack.Outputs.PrivateSubnet1
         PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2
+        Environment: !Ref Environment
 
   ComputeStack:
     Type: AWS::CloudFormation::Stack
@@ -48,6 +56,7 @@ Resources:
       Parameters:
         PrivateSubnet1: !GetAtt NetworkStack.Outputs.PrivateSubnet1
         PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2
+        Environment: !Ref Environment
 
 Outputs:
   VPCId:

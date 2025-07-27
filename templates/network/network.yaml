@@ -17,6 +17,9 @@ Parameters:
   PrivateSubnet2Cidr:
     Type: String
     Default: 10.0.4.0/24
+  Environment:
+    Type: String
+    Default: dev
 
 Resources:
   VPC:
@@ -27,14 +30,14 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: fuego-socks-vpc
+          Value: !Sub "${Environment}-fuego-socks-vpc"
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: fuego-socks-igw
+          Value: !Sub "${Environment}-fuego-socks-igw"
 
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment

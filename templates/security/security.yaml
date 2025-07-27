@@ -12,6 +12,9 @@ Parameters:
     Type: String
   PrivateSubnet2:
     Type: String
+  Environment:
+    Type: String
+    Default: dev
 
 Resources:
   EKSClusterSecurityGroup:
@@ -21,7 +24,7 @@ Resources:
       VpcId: !Ref VpcId
       Tags:
         - Key: Name
-          Value: eks-cluster-sg
+          Value: !Sub "${Environment}-eks-cluster-sg"
 
   EKSNodeSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -30,7 +33,7 @@ Resources:
       VpcId: !Ref VpcId
       Tags:
         - Key: Name
-          Value: eks-node-sg
+          Value: !Sub "${Environment}-eks-node-sg"
 
   NodeIngressFromClusterSG:
     Type: AWS::EC2::SecurityGroupIngress

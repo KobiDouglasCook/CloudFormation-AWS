@@ -6,6 +6,9 @@ Parameters:
     Type: String
   PrivateSubnet2:
     Type: String
+  Environment:
+    Type: String
+    Default: dev
 
 Resources:
   EKSClusterRole:
@@ -26,7 +29,7 @@ Resources:
   EKSCluster:
     Type: AWS::EKS::Cluster
     Properties:
-      Name: fuego-socks-eks
+      Name: !Sub "${Environment}-fuego-socks-vpc"
       RoleArn: !GetAtt EKSClusterRole.Arn
       ResourcesVpcConfig:
         SubnetIds:

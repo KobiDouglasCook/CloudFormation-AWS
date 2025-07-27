@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security Groups for EKS Cluster and Worker Nodes
+
+Parameters:
+  VpcId:
+    Type: String
+  PublicSubnet1:
+    Type: String
+  PublicSubnet2:
+    Type: String
+  PrivateSubnet1:
+    Type: String
+  PrivateSubnet2:
+    Type: String
+
+Resources:
+  EKSClusterSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow communications between EKS Cluster and Nodes
+      VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: eks-cluster-sg
+
+  EKSNodeSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow worker node communication and internet access
+      VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: eks-node-sg
+
+  NodeIngressFromClusterSG:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow Cluster communication to Nodes
+      GroupId: !Ref EKSNodeSecurityGroup
+      SourceSecurityGroupId: !Ref EKSClusterSecurityGroup
+      IpProtocol: -1 # All traffic
+
+  ClusterIngressFromNodeSG:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow Nodes communication to Cluster
+      GroupId: !Ref EKSClusterSecurityGroup
+      SourceSecurityGroupId: !Ref EKSNodeSecurityGroup
+      IpProtocol: -1
+
+  NodeOutboundInternetAccess:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: Allow worker nodes outbound access to the internet
+      GroupId: !Ref EKSNodeSecurityGroup
+      CidrIp: 0.0.0.0/0
+      IpProtocol: -1
+
+Outputs:
+  ClusterSecurityGroupId:
+    Description: Security Group ID for EKS Cluster
+    Value: !Ref EKSClusterSecurityGroup
+
+  NodeSecurityGroupId:
+    Description: Security Group ID for EKS Worker Nodes
+    Value: !Ref EKSNodeSecurityGroup

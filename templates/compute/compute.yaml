@@ -2,8 +2,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: EKS Cluster & Managed Node Group for Microservices Deployment
 
 Parameters:
-  VpcId:
-    Type: String
   PrivateSubnet1:
     Type: String
   PrivateSubnet2:

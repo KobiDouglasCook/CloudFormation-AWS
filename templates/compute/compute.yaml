@@ -9,6 +9,8 @@ Parameters:
   Environment:
     Type: String
     Default: dev
+  ClusterSecurityGroupId:
+    Type: String
 
 Resources:
   EKSClusterRole:
@@ -35,6 +37,8 @@ Resources:
         SubnetIds:
           - !Ref PrivateSubnet1
           - !Ref PrivateSubnet2
+        SecurityGroupIds:
+          - !Ref ClusterSecurityGroupId
 
   NodeGroupRole:
     Type: AWS::IAM::Role
@@ -48,10 +52,10 @@ Resources:
                 - ec2.amazonaws.com
             Action:
               - sts:AssumeRole
-        ManagedPolicyArns:
-          - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
-          - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-          - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
 
   EKSNodeGroup:
     Type: AWS::EKS::Nodegroup

@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$REPO_ROOT"
+
 BUCKET_NAME="fuego-socks-prod-templates"
 STACK_NAME="fuego-socks-prod"
 PARAM_FILE="parameters/prod.json"
@@ -10,7 +14,7 @@ aws s3 mb s3://$BUCKET_NAME || echo "Bucket already exists, continuing..."
 
 echo ">>> Packaging CloudFormation templates..."
 aws cloudformation package \
-  --template-file root-stack.yaml \
+  --template-file templates/root-stack.yaml \
   --s3-bucket $BUCKET_NAME \
   --output-template-file root-stack-packaged.yaml
 
@@ -20,3 +24,5 @@ aws cloudformation deploy \
   --stack-name $STACK_NAME \
   --parameter-overrides file://$PARAM_FILE \
   --capabilities CAPABILITY_NAMED_IAM
+
+echo ">>> Successfully Created CloudFormation stack!"

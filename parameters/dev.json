@@ -1,3 +1,6 @@
-{
-    "Environment": "dev"
-}
+[
+    {
+        "ParameterKey": "Environment",
+        "ParameterValue": "dev"
+    }
+]

@@ -28,7 +28,7 @@ Resources:
   NetworkStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./network.yaml
+      TemplateURL: network/network.yaml
       Parameters:
         VpcCidr: !Ref VpcCidr
         PublicSubnet1Cidr: !Ref PublicSubnet1Cidr
@@ -40,7 +40,7 @@ Resources:
   SecurityStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./security.yaml
+      TemplateURL: security/security.yaml
       Parameters:
         VpcId: !GetAtt NetworkStack.Outputs.VPCId
         PublicSubnet1: !GetAtt NetworkStack.Outputs.PublicSubnet1
@@ -52,11 +52,13 @@ Resources:
   ComputeStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./compute.yaml
+      TemplateURL: compute/compute.yaml
       Parameters:
         PrivateSubnet1: !GetAtt NetworkStack.Outputs.PrivateSubnet1
         PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2
         Environment: !Ref Environment
+        ClusterSecurityGroupId: !GetAtt SecurityStack.Outputs.ClusterSecurityGroupId
+    DependsOn: SecurityStack
 
 Outputs:
   VPCId:

@@ -5,6 +5,11 @@ The deployment leverages CloudFormation templates for infrastructure as code, **
 
 ---
 
+![Sock Shop Frontend](https://raw.githubusercontent.com/microservices-demo/microservices-demo.github.io/master/assets/sockshop-frontend.png)
+
+
+---
+
 ## Project Structure
 
 ```

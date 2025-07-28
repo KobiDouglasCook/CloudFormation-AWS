@@ -43,6 +43,7 @@ Resources:
   NodeGroupRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: fuego-socks-node-role
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -71,7 +72,6 @@ Resources:
         MaxSize: 3
       InstanceTypes:
         - t2.micro
-      AmiType: AL2_x86_64
 
 Outputs:
   ClusterName:

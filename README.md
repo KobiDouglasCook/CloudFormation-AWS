@@ -38,7 +38,7 @@ The deployment leverages CloudFormation templates for infrastructure as code, **
 
 ---
 
-## Deployment
+## Infrastructure Deployment
 
 1. **Update variables** in `scripts/deploy.sh` as needed (region, cluster name, etc.).  
 2. **Run the deployment script:**
@@ -51,8 +51,27 @@ chmod +x scripts/deploy.sh
 This script will:
 
 - Create or verify your S3 bucket for CloudFormation templates  
-- Package and deploy CloudFormation stacks for networking, compute, and security  
-- Install the AWS Load Balancer Controller on your EKS cluster  
+- Package and deploy CloudFormation stacks for networking, compute, and security   
+- Create and setup EKS Cluster with Managed Node Workers 
+
+---
+
+
+## Microservice Deployment
+
+1. **Update variables** in `scripts/microservice-deploy.sh` as needed.  
+2. **Run the deployment script:**
+
+```bash
+chmod +x scripts/microservice-deploy.sh
+./scripts/microservice-deploy.sh
+```
+
+This script will:
+
+- Verify that aws, kubectl, and helm are installed
+- Updates local kubeconfig 
+- Install the AWS Load Balancer Controller via Helm
 - Deploy the Bitnami microservices demo Helm chart (Sock Shop)  
 - Apply the Kubernetes Ingress resource to expose the app externally  
 

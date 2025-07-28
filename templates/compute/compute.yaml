@@ -67,9 +67,9 @@ Resources:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       ScalingConfig:
-        DesiredSize: 2
-        MinSize: 1
-        MaxSize: 3
+        DesiredSize: 3
+        MinSize: 2
+        MaxSize: 5
       InstanceTypes:
         - t2.micro
 

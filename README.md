@@ -44,8 +44,8 @@ The deployment leverages CloudFormation templates for infrastructure as code, **
 2. **Run the deployment script:**
 
 ```bash
-chmod +x scripts/deploy.sh
-./scripts/deploy.sh
+chmod +x scripts/dev/deploy.sh
+./scripts/dev/deploy.sh
 ```
 
 This script will:

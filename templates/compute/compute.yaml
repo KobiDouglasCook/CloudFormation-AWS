@@ -29,7 +29,7 @@ Resources:
   EKSCluster:
     Type: AWS::EKS::Cluster
     Properties:
-      Name: !Sub "${Environment}-fuego-socks-vpc"
+      Name: !Sub "${Environment}-fuego-socks-eks"
       RoleArn: !GetAtt EKSClusterRole.Arn
       ResourcesVpcConfig:
         SubnetIds:

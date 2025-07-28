@@ -63,8 +63,8 @@ This script will:
 2. **Run the deployment script:**
 
 ```bash
-chmod +x scripts/microservice-deploy.sh
-./scripts/microservice-deploy.sh
+chmod +x scripts/dev/microservice-deploy.sh
+./scripts/dev/microservice-deploy.sh
 ```
 
 This script will:

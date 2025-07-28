@@ -38,7 +38,7 @@ The deployment leverages CloudFormation templates for infrastructure as code, **
 
 ---
 
-## Infrastructure Deployment
+## 1. Infrastructure Deployment
 
 1. **Update variables** in `scripts/deploy.sh` as needed (region, cluster name, etc.).  
 2. **Run the deployment script:**
@@ -57,7 +57,7 @@ This script will:
 ---
 
 
-## Microservice Deployment
+## 2. Microservice Deployment
 
 1. **Update variables** in `scripts/microservice-deploy.sh` as needed.  
 2. **Run the deployment script:**
@@ -77,7 +77,7 @@ This script will:
 
 ---
 
-## Accessing the Application
+## 3. Accessing the Application
 
 After deployment:
 

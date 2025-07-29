@@ -57,6 +57,23 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
 
+  NodeGroupRolePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: NodeGroupDescribeEC2Policy
+      Roles:
+        - !Ref NodeGroupRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:DescribeInstances
+              - ec2:DescribeVpcs
+              - ec2:DescribeSubnets
+              - ec2:DescribeSecurityGroups
+            Resource: "*"
+
   EKSNodeGroup:
     Type: AWS::EKS::Nodegroup
     Properties:

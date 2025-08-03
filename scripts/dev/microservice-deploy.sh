@@ -12,8 +12,8 @@ done
 # ----------- CONFIGURATION VARIABLES ------------
 REGION="us-east-1"
 CLUSTER_NAME="dev-fuego-socks-eks"
-NAMESPACE="kube-system"                      # Namespace for AWS Load Balancer Controller
-MICROSERVICES_NAMESPACE="microservices"      # Namespace for microservices demo
+NAMESPACE="kube-system"                    
+MICROSERVICES_NAMESPACE="sock-shop"      
 SERVICE_ACCOUNT="aws-load-balancer-controller"
 
 HELM_REPO_AWS="eks"
@@ -21,8 +21,6 @@ HELM_REPO_AWS_URL="https://aws.github.io/eks-charts"
 HELM_REPO_BITNAMI="bitnami"
 HELM_REPO_BITNAMI_URL="https://charts.bitnami.com/bitnami"
 
-MICROSERVICES_HELM_CHART="microservices-demo"
-MICROSERVICES_RELEASE_NAME="microservices-demo"
 INGRESS_PATH="./scripts/dev/ingress.yaml"
 
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
@@ -32,6 +30,10 @@ POLICY_ARN="arn:aws:iam::$ACCOUNT_ID:policy/AWSLoadBalancerControllerIAMPolicy"
 echo "Fetching VPC ID for EKS cluster $CLUSTER_NAME in region $REGION..."
 VPC_ID=$(aws eks describe-cluster --name "$CLUSTER_NAME" --region "$REGION" --query "cluster.resourcesVpcConfig.vpcId" --output text)
 echo "VPC ID found: $VPC_ID"
+
+# ----------- UPDATE KUBECONFIG FOR EKS CLUSTER ------------
+echo "Updating kubeconfig for EKS cluster $CLUSTER_NAME in region $REGION..."
+aws eks update-kubeconfig --region "$REGION" --name "$CLUSTER_NAME"
 
 # ----------- CREATE IAM POLICY FOR AWS LOAD BALANCER CONTROLLER ------------
 echo "Checking for existing IAM policy: AWSLoadBalancerControllerIAMPolicy..."
@@ -61,9 +63,9 @@ eksctl create iamserviceaccount \
   --override-existing-serviceaccounts
 
 # ----------- ADD HELM REPOSITORIES AND UPDATE ------------
-echo "Adding Helm chart repositories for AWS and Bitnami..."
-helm repo add "$HELM_REPO_AWS" "$HELM_REPO_AWS_URL"
-helm repo add "$HELM_REPO_BITNAMI" "$HELM_REPO_BITNAMI_URL"
+echo "Adding Helm chart repositories..."
+helm repo add "$HELM_REPO_AWS" "$HELM_REPO_AWS_URL" || true
+helm repo add "$HELM_REPO_BITNAMI" "$HELM_REPO_BITNAMI_URL" || true
 helm repo update
 
 # ----------- INSTALL AWS LOAD BALANCER CONTROLLER VIA HELM ------------
@@ -86,11 +88,12 @@ else
   echo "Namespace '$MICROSERVICES_NAMESPACE' already exists."
 fi
 
-# ----------- INSTALL MICROSERVICES DEMO HELM CHART ------------
-echo "Installing microservices demo Helm chart into namespace $MICROSERVICES_NAMESPACE..."
-helm upgrade --install "$MICROSERVICES_RELEASE_NAME" "$HELM_REPO_BITNAMI/$MICROSERVICES_HELM_CHART" \
-  -n "$MICROSERVICES_NAMESPACE" \
-  --wait
+# ----------- DEPLOY SOCK SHOP MICROSERVICES VIA KUBECTL MANIFESTS ------------
+echo "Deploying Sock Shop microservices manifests into namespace $MICROSERVICES_NAMESPACE..."
+rm -rf tmp-sockshop
+git clone https://github.com/microservices-demo/microservices-demo.git tmp-sockshop
+kubectl apply -n "$MICROSERVICES_NAMESPACE" -f tmp-sockshop/deploy/kubernetes/manifests
+rm -rf tmp-sockshop
 
 # ----------- APPLY INGRESS MANIFEST TO EXPOSE MICROSERVICES ------------
 echo "Applying ingress manifest to namespace $MICROSERVICES_NAMESPACE..."

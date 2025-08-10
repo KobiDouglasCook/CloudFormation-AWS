@@ -83,11 +83,11 @@ Resources:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       ScalingConfig:
-        DesiredSize: 3
-        MinSize: 2
-        MaxSize: 5
+        DesiredSize: 2
+        MinSize: 1
+        MaxSize: 3
       InstanceTypes:
-        - t3.medium
+        - t2.micro
 
 Outputs:
   ClusterName:

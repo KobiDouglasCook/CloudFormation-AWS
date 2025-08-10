@@ -36,6 +36,8 @@ Resources:
         PrivateSubnet1Cidr: !Ref PrivateSubnet1Cidr
         PrivateSubnet2Cidr: !Ref PrivateSubnet2Cidr
         Environment: !Ref Environment
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
 
   SecurityStack:
     Type: AWS::CloudFormation::Stack
@@ -48,6 +50,8 @@ Resources:
         PrivateSubnet1: !GetAtt NetworkStack.Outputs.PrivateSubnet1
         PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2
         Environment: !Ref Environment
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
 
   ComputeStack:
     Type: AWS::CloudFormation::Stack
@@ -58,7 +62,18 @@ Resources:
         PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2
         Environment: !Ref Environment
         ClusterSecurityGroupId: !GetAtt SecurityStack.Outputs.ClusterSecurityGroupId
-    DependsOn: SecurityStack
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  ObservabilityStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: observability/observability.yaml
+      Parameters:
+        Environment: !Ref Environment
+    DependsOn: ComputeStack
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
 
 Outputs:
   VPCId:

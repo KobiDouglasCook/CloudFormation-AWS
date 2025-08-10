@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudWatch observability | Dashboard w/ High Memory and Billing Alarms
+
+Parameters:
+  Environment:
+    Type: String
+    AllowedValues: [dev, prod]
+    Description: Deployment environment
+
+Resources:
+  EKSLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/eks/${Environment}/system-logs"
+      RetentionInDays: 14
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  EKSHighMemoryAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "EKS-HighMemory-${Environment}"
+      AlarmDescription: "Triggers when EKS memory usage exceeds 80% across nodes"
+      Namespace: ContainerInsights
+      MetricName: node_memory_utilization
+      Dimensions:
+        - Value: ClusterName
+          Name: !Sub "${Environment}-fuego-socks-eks"
+      Statistic: Average
+      Period: 300 # 5 minute reports
+      EvaluationPeriods: 1
+      Threshold: 80 # memory usage by percent
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions: []
+      TreatMissingData: notBreaching
+
+  BillingAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "BillingAlarm-${Environment}"
+      AlarmDescription: "Triggers when AWS account estimated charges exceeds $10"
+      Namespace: AWS/Billing
+      MetricName: EstimatedCharges
+      Dimensions:
+        - Value: Currency
+          Name: USD
+      Statistic: Maximum
+      Period: 21600 # 6 hours
+      EvaluationPeriods: 1
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions: []
+      TreatMissingData: notBreaching
+
+  EKSObservabilityDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub "EKS-Observability-${Environment}"
+      DashboardBody: !Sub |
+        {
+          "widgets": [
+            {
+              "type": "metric",
+              "x": 0, "y": 0,
+              "width": 12, "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "ContainerInsights", "node_memory_utilization", "ClusterName", "eks-${Environment}-cluster" ]
+                ],
+                "title": "EKS Node Memory Utilization (%)",
+                "stat": "Average",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0, "y": 6,
+              "width": 12, "height": 6,
+              "properties": {
+                "metrics": [
+                  [ "AWS/Billing", "EstimatedCharges", "Currency", "USD" ]
+                ],
+                "title": "Estimated AWS Account Cost (USD)",
+                "stat": "Maximum",
+                "period": 21600
+              }
+            }
+          ]
+        }
+
+Outputs:
+  LogGroupName:
+    Description: EKS log group name
+    Value: !Ref EKSLogGroup
+
+  DashboardName:
+    Description: Dashboard created
+    Value: !Ref EKSObservabilityDashboard

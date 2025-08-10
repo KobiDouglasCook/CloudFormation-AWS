@@ -6,6 +6,8 @@ Parameters:
     Type: String
     AllowedValues: [dev, prod]
     Description: Deployment environment
+  ClusterName:
+    Type: String
 
 Resources:
   EKSLogGroup:
@@ -28,7 +30,7 @@ Resources:
       MetricName: node_memory_utilization
       Dimensions:
         - Value: ClusterName
-          Name: !Sub "${Environment}-fuego-socks-eks"
+          Name: !Ref ClusterName
       Statistic: Average
       Period: 300 # 5 minute reports
       EvaluationPeriods: 1

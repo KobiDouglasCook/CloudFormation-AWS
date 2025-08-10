@@ -71,7 +71,7 @@ Resources:
       TemplateURL: observability/observability.yaml
       Parameters:
         Environment: !Ref Environment
-    DependsOn: ComputeStack
+        ClusterName: !GetAtt ComputeStack.Outputs.ClusterName
     DeletionPolicy: Delete
     UpdateReplacePolicy: Delete
 

@@ -10,6 +10,13 @@ Parameters:
     Type: String
 
 Resources:
+  EKSObservabilityAddOn:
+    Type: AWS::EKS::Addon
+    Properties:
+      ClusterName: !Ref ClusterName
+      AddonName: amazon-cloudwatch-observability
+      ResolveConflicts: OVERWRITE
+
   EKSLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -29,8 +36,8 @@ Resources:
       Namespace: ContainerInsights
       MetricName: node_memory_utilization
       Dimensions:
-        - Value: ClusterName
-          Name: !Ref ClusterName
+        - Name: ClusterName
+          Value: !Ref ClusterName
       Statistic: Average
       Period: 300 # 5 minute reports
       EvaluationPeriods: 1
@@ -47,8 +54,8 @@ Resources:
       Namespace: AWS/Billing
       MetricName: EstimatedCharges
       Dimensions:
-        - Value: Currency
-          Name: USD
+        - Name: Currency
+          Value: USD
       Statistic: Maximum
       Period: 21600 # 6 hours
       EvaluationPeriods: 1
@@ -70,7 +77,7 @@ Resources:
               "width": 12, "height": 6,
               "properties": {
                 "metrics": [
-                  [ "ContainerInsights", "node_memory_utilization", "ClusterName", "eks-${Environment}-cluster" ]
+                  [ "ContainerInsights", "node_memory_utilization", "ClusterName", "${ClusterName}" ]
                 ],
                 "title": "EKS Node Memory Utilization (%)",
                 "stat": "Average",

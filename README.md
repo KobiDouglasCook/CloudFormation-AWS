@@ -21,10 +21,11 @@ The deployment leverages CloudFormation templates for infrastructure as code, **
 │   ├── dev         # Scripts to provision infra, deploy Helm charts, and expose app
 │   └── prod      
 └── templates
-    ├── compute           # templates for compute resources (EKS cluster, node groups)
-    ├── network           # templates for VPC, subnets, routing, gateways
+    ├── compute           # template for compute resources (EKS cluster, node groups)
+    ├── network           # template for VPC, subnets, routing, gateways
     ├── root-stack.yaml   # Root CloudFormation stack referencing nested stacks
-    └── security          # templates for IAM roles, policies, and security groups
+    ├── observability     # template for cloudwatch dashboard and alarms
+    └── security          # template for IAM roles, policies, and security groups
 ```
 
 ---
